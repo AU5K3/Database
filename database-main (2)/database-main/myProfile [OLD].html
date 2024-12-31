@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        header .balance {
+            font-size: 16px;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+        nav {
+            background-color: #0056b3;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        main {
+            margin-top: 20px;
+            width: 90%;
+            max-width: 800px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 250px;
+            text-align: left;
+        }
+        .card h3 {
+            margin: 0 0 10px;
+            font-size: 20px;
+            color: #333;
+        }
+        .card p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+    <script>
+        const balanceElement = document.getElementById('balanceDisplay');
+
+      async function fetchProfileData() {
+    try {
+        const response = await fetch('myProfile.php');
+        const data = await response.json();
+
+        if (data.success) {
+            // Update balance
+            document.getElementById('balanceDisplay').textContent = `$${parseFloat(data.balance).toFixed(2)}`;
+
+            // Populate member cards
+            populateCards(data.members);
+        } else {
+            console.error('Error:', data.message);
+        }
+    } catch (error) {
+        console.error('Error fetching profile data:', error);
+    }
+}
+
+function populateCards(members) {
+    const mainElement = document.getElementById('main');
+    mainElement.innerHTML = ''; // Clear existing content
+
+    members.forEach(member => {
+        const card = document.createElement('div');
+        card.classList.add('card');
+        card.innerHTML = `
+            <h3>${member.username}</h3>
+            <p><strong>Address:</strong> ${member.address}</p>
+            <p><strong>Rating:</strong> ${member.averageRating} / 5</p>
+            <p><strong>Balance:</strong> $${parseFloat(member.balance).toFixed(2)}</p>
+            <p><strong>Availability:</strong> ${member.availability} hours/week</p>
+        `;
+        mainElement.appendChild(card);
+    });
+}
+
+window.onload = fetchProfileData;
+
+    </script>
+</head>
+<body>
+    <header>
+        <h1>My Profile</h1>
+        <div class="balance">Balance: <span id="balanceDisplay">Loading...</span></div>
+    </header>
+    <nav>
+        <a href="RequestCare.html">Request Caregiver</a>
+        <a href="findContract.html">Caregiver Listings</a>
+        <a href="submit_contract.html">Create Contract</a>
+        <a href="updateProfile.html">Update Profile</a>
+    </nav>
+    <main id="main">
+        <!-- Member cards will be dynamically inserted here -->
+    </main>
+</body>
+</html>
